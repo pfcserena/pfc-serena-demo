@@ -29,7 +29,6 @@ log_mel_params = {
 
 duration = 10
 
-
 # Generate 10 second snippets of the audio files
 def generate_snippets(audio_file, sr, duration):
     y, sr = lib.load(audio_file, sr=sr)
@@ -124,3 +123,28 @@ def plot_audio_labels(audio_name, dataframe, inicio, fin):
 
     # Display a widget to listen to the audio
     return information
+
+# Generate Dataframe with the labeled data
+def generate_labeled_data(audio_file):
+    
+    labeled_data = []
+    
+
+    y, sr = librosa.load(audio_file, sr=sr)
+
+    log_mel = generate_mel_spec(y, sr, log_mel_params)
+
+    labeled_data.append((audio_file, y, log_mel))
+        
+    labeled_data = pd.DataFrame(labeled_data, columns=["name_audio", 'audio_signal' , 'logmel'])
+    
+    return labeled_data
+
+def apply_pred(row):
+    model = tf.keras.models.load_model('/pfc-serena-demo/Model/model.h5')
+
+    logmel = row['logmel']
+    pred = model.predict(np.array([logmel]))[0];
+    row["Motor Prediction"] = pred[0]
+    row["Aereo Prediction"] = pred[1]
+    return row
