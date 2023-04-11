@@ -29,6 +29,28 @@ log_mel_params = {
 
 duration = 10
 
+def get_params():
+
+    sr = 48000
+    window_length_samples = 2560
+    hop_length_samples = 694
+    n_mels = 128
+    stft_window_seconds = window_length_samples/sr
+    stft_hop_seconds = hop_length_samples/sr
+    fft_length =2 ** int(np.ceil(np.log(window_length_samples) / np.log(2.0)))
+
+    log_mel_params = {
+        "fs" : sr,
+        "stft_window_seconds" : stft_window_seconds,
+        "stft_hop_seconds" : stft_hop_seconds,
+        "n_mels" :  n_mels,
+        "window_length_samples" :  window_length_samples,
+        "hop_length_samples" :  hop_length_samples,
+        "fft_length" : fft_length
+    }
+
+    return log_mel_params
+
 # Generate 10 second snippets of the audio files
 def generate_snippets(audio_file, sr, duration):
     y, sr = lib.load(audio_file, sr=sr)
@@ -128,9 +150,10 @@ def plot_audio_labels(audio_name, dataframe, inicio, fin):
 def generate_labeled_data(audio_file):
     
     labeled_data = []
-    
 
-    y, sr = librosa.load(audio_file, sr=sr)
+    log_mel_params = get_params
+
+    y, sr = librosa.load(audio_file, sr=log_mel_params.fs)
 
     log_mel = generate_mel_spec(y, sr, log_mel_params)
 
