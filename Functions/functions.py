@@ -114,8 +114,8 @@ def analyze_audios(audios):
 
 def plot_audio_labels(audio_name, dataframe, inicio, fin):
     information = dataframe[dataframe["Nombre del audio"]==audio_name]
-    information = dataframe[dataframe["Comienzo (s)"]>=inicio]
-    information = dataframe[dataframe["Fin (s)"]<=fin]
+    information = information[information["Comienzo (s)"]>=inicio]
+    information = information[information["Fin (s)"]<=fin]
 
     # sort by begin
     information = information.sort_values(by=['Comienzo (s)'], ascending = True)
