@@ -155,8 +155,12 @@ def check_information(information, inicio):
 
     '''
 
+    # Modify inicio to be a multiple of 10
+    inicio = inicio - inicio%10
+
     # Get the information of the audio
     information = information[information["Comienzo (s)"]==inicio]
+
 
     # Get the audio signal
     audio_signal = information["Audio"].values[0]
@@ -165,33 +169,5 @@ def check_information(information, inicio):
     print("Score Vehiculos Acuaticos y Terrestres: ", information["Score Vehiculos Acuaticos y Terrestres"].values[0])
     print("Score Vehiculos Aereos: ", information["Score Vehiculos Aereos"].values[0])
 
-    # Display a widget to listen to the audio
-    ipd.Audio(audio_signal, rate=48000)
+    return audio_signal
 
-    return 
-
-# Generate Dataframe with the labeled data
-def generate_labeled_data(audio_file):
-    
-    labeled_data = []
-
-    log_mel_params = get_params()
-
-    y, sr = librosa.load(audio_file, sr=log_mel_params['fs'])
-
-    log_mel = generate_mel_spec(y, sr, log_mel_params)
-
-    labeled_data.append((audio_file, y, log_mel))
-        
-    labeled_data = pd.DataFrame(labeled_data, columns=["name_audio", 'audio_signal' , 'logmel'])
-    
-    return labeled_data
-
-def apply_pred(row):
-    model = tf.keras.models.load_model('./pfc-serena-demo/Model/model.h5')
-
-    logmel = row['logmel']
-    pred = model.predict(np.array([logmel]))[0];
-    row["Motor Prediction"] = pred[0]
-    row["Aereo Prediction"] = pred[1]
-    return row
