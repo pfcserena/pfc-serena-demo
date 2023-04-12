@@ -93,7 +93,7 @@ def analyze_audios(audios):
 
   analyzed_data = []
 
-  model = tf.keras.models.load_model("Model/model.h5")
+  model = tf.keras.models.load_model('./pfc-serena-demo/Model/model.h5')
 
   for audio in audios:
       audio_file = "Audios/"+audio
