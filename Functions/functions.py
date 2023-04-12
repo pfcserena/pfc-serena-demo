@@ -151,9 +151,9 @@ def generate_labeled_data(audio_file):
     
     labeled_data = []
 
-    log_mel_params = get_params
+    log_mel_params = get_params()
 
-    y, sr = librosa.load(audio_file, sr=log_mel_params.fs)
+    y, sr = librosa.load(audio_file, sr=log_mel_params['fs'])
 
     log_mel = generate_mel_spec(y, sr, log_mel_params)
 
@@ -164,7 +164,7 @@ def generate_labeled_data(audio_file):
     return labeled_data
 
 def apply_pred(row):
-    model = tf.keras.models.load_model('/pfc-serena-demo/Model/model.h5')
+    model = tf.keras.models.load_model('./pfc-serena-demo/Model/model.h5')
 
     logmel = row['logmel']
     pred = model.predict(np.array([logmel]))[0];
