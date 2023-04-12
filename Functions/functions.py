@@ -8,6 +8,7 @@ import tensorflow as tf
 from sklearn.metrics import confusion_matrix, accuracy_score
 import sklearn
 import seaborn as sns
+import IPython.display as ipd
 
 sr = 48000
 window_length_samples = 2560
@@ -96,7 +97,7 @@ def analyze_audios(audios):
   model = tf.keras.models.load_model('./pfc-serena-demo/Model/model.h5')
 
   for audio in audios:
-      audio_file = "Audios/"+audio
+      audio_file = "./pfc-serena-demo/Audios/"+audio
       snippets = generate_snippets(audio_file, sr, duration)
       for s in range(len(snippets)):
         snippet = snippets[s]
@@ -130,7 +131,7 @@ def plot_audio_labels(audio_name, dataframe, inicio, fin):
         x_axis.append(row["Comienzo (s)"])
         x_axis.append(row["Fin (s)"]+0.001)
 
-    plt.figure(figsize=(20, 5))
+    plt.figure(figsize=(20, 5), dpi=300)
     plt.title("Evolucion de los Scores para el audio: " + audio_name)
     plt.plot(np.array(x_axis), pred0, color='green', linestyle ='dashdot', label = "VEHICULOS ACUATICOS Y TERRESTRES Score")
     plt.plot(np.array(x_axis), pred1, color='orange', linestyle ='dashdot', label = "VEHICULOS AEREOS Score")
@@ -140,11 +141,34 @@ def plot_audio_labels(audio_name, dataframe, inicio, fin):
     plt.xlabel('Time (s)')
     plt.ylabel('Probability')
     plt.ylim(-0.01, 1.01)
+    plt.xlim(inicio,fin)
     plt.legend()
     plt.show()
 
     # Display a widget to listen to the audio
     return information
+
+def check_information(information, inicio):
+    '''
+    
+    Given a start time, this function return the score in that chunk of time and make posible to listen to the audio.
+
+    '''
+
+    # Get the information of the audio
+    information = information[information["Comienzo (s)"]==inicio]
+
+    # Get the audio signal
+    audio_signal = information["Audio"].values[0]
+
+    # Print scores and listen to the audio
+    print("Score Vehiculos Acuaticos y Terrestres: ", information["Score Vehiculos Acuaticos y Terrestres"].values[0])
+    print("Score Vehiculos Aereos: ", information["Score Vehiculos Aereos"].values[0])
+
+    # Display a widget to listen to the audio
+    ipd.Audio(audio_signal, rate=48000)
+
+    return 
 
 # Generate Dataframe with the labeled data
 def generate_labeled_data(audio_file):
