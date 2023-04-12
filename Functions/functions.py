@@ -63,6 +63,9 @@ def generate_snippets(audio_file, sr, duration):
         start = i * n_samples_per_snippet
         end = start + n_samples_per_snippet
         snippet = y[start:end]
+        if len(snippet) < n_samples_per_snippet:
+            # Zero padding
+            snippet = np.pad(snippet, (0, n_samples_per_snippet - len(snippet)), 'constant')
         # When decided whats the preprocessing for the best model here will be added that preprocessing
         snippets.append(snippet)
     return snippets
